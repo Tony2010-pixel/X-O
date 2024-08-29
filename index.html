@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-O Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #000000;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        h1 {
+            color: #ffffff; /* White */
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px auto;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #1a1a1a;
+            border: 2px solid #ffffff; /* White */
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #ffffff; /* White */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cell:hover {
+            background-color: #333333; /* Darker gray */
+        }
+        #scoreboard {
+            margin: 20px;
+            font-size: 24px;
+            color: #ffffff; /* White */
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff; /* White */
+            background-color: #444444; /* Dark gray */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #555555; /* Lighter gray */
+        }
+    </style>
+</head>
+<body>
+    <h1>X-O Game</h1>
+    <div id="scoreboard">
+        <p>Player X: <span id="scoreX">0</span></p>
+        <p>Player O: <span id="scoreO">0</span></p>
+    </div>
+    <div id="board"></div>
+    <button id="reset">Reset Game</button>
+
+    <script>
+        const board = document.getElementById('board');
+        const scoreX = document.getElementById('scoreX');
+        const scoreO = document.getElementById('scoreO');
+        const resetButton = document.getElementById('reset');
+
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let score = { X: 0, O: 0 };
+
+        function createBoard() {
+            board.innerHTML = '';
+            gameBoard.forEach((cell, index) => {
+                const div = document.createElement('div');
+                div.classList.add('cell');
+                div.textContent = cell;
+                div.addEventListener('click', () => makeMove(index));
+                board.appendChild(div);
+            });
+        }
+
+        function makeMove(index) {
+            if (gameBoard[index] === '' && !checkWinner()) {
+                gameBoard[index] = currentPlayer;
+                if (checkWinner()) {
+                    score[currentPlayer]++;
+                    updateScore();
+                }
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                createBoard();
+            }
+        }
+
+        function checkWinner() {
+            const winConditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            return winConditions.some(condition => {
+                const [a, b, c] = condition;
+                return gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c];
+            });
+        }
+
+        function updateScore() {
+            scoreX.textContent = score.X;
+            scoreO.textContent = score.O;
+            alert(`Player ${currentPlayer} wins!`);
+        }
+
+        resetButton.addEventListener('click', () => {
+            gameBoard = ['', '', '', '', '', '', '', '', ''];
+            createBoard();
+        });
+
+        createBoard();
+    </script>
+</body>
+</html>
